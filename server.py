@@ -86,15 +86,19 @@ async def handle(request):
         data = await request.json()
         if data['type'] == 'DISCORD-RELAY-MESSAGE':
             msg = translation_re.sub('', data['content'])
-            msg = discord.utils.escape_mentions(msg)[:2000]
+            msg = discord.utils.escape_mentions(msg)
+            chunks = [msg[i:i+2000] for i in range(0, len(msg), 2000)]
             if 'context' in data:
                 id = int(data['context'])
                 target_channel = bot.get_partial_messageable(id)
-                await target_channel.send(msg)
+                for chunk in chunks:
+                    await target_channel.send(chunk)
             elif incoming_msgs is None:
-                await channel.send(msg)
+                for chunk in chunks:
+                    await channel.send(chunk)
             else:
-                incoming_msgs.append(msg)
+                for chunk in chunks:
+                    incoming_msgs.append(chunk)
 
             # discord.send should NOT block extensively on the Lua side
             return web.Response(text='Acknowledged')
@@ -179,7 +183,7 @@ async def login(ctx, username, password=''):
                        delete_after=10)
         try:
             await ctx.message.delete()
-        except discord.errros.Forbidden:
+        except discord.errors.Forbidden:
             print(f"Unable to delete possible password leak by user ID "
                   f"{ctx.author.id} due to insufficient permissions.")
         return
