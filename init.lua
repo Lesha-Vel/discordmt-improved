@@ -105,16 +105,16 @@ end
 function discord.send(message, id)
     local data = {
         type = 'DISCORD-RELAY-MESSAGE',
-        content = minetest.strip_colors(message)
+        content = minetest.strip_colors(message):gsub("\\", "\\\\"):gsub("%*", "\\*"):gsub("_", "\\_"):gsub("^#", "\\#")
     }
     if id then
         data['context'] = id
     end
-    http.fetch({
+    http.fetch_async({
         url = 'localhost:'..tostring(port),
         timeout = timeout,
         post_data = minetest.write_json(data)
-    }, function(_) end)
+    })
 end
 
 function minetest.chat_send_all(message)
@@ -129,17 +129,34 @@ minetest.after(0, minetest.register_on_chat_message, function(name, message)
 end)
 
 local timer = 0
+local ongoing = nil
 minetest.register_globalstep(function(dtime)
     if dtime then
         timer = timer + dtime
-        if timer > 0.2 then
-            http.fetch({
-                url = 'localhost:'..tostring(port),
-                timeout = timeout,
-                post_data = minetest.write_json({
-                    type = 'DISCORD-REQUEST-DATA'
+        if timer > 0.9 then
+            if not ongoing then
+                ongoing = http.fetch_async({
+                    url = 'localhost:'..tostring(port),
+                    timeout = timeout,
+                    post_data = minetest.write_json({
+                        type = 'DISCORD-REQUEST-DATA'
+                    })
                 })
-            }, discord.handle_response)
+            else
+                local res = http.fetch_async_get(ongoing)
+
+                if res.completed == true then
+                    discord.handle_response(res)
+                    ongoing = http.fetch_async({
+                        url = 'localhost:'..tostring(port),
+                        timeout = timeout,
+                        post_data = minetest.write_json({
+                            type = 'DISCORD-REQUEST-DATA'
+                        })
+                    })
+                end
+            end
+
             timer = 0
         end
     end
