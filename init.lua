@@ -1,6 +1,7 @@
 local http = minetest.request_http_api()
 local settings = minetest.settings
 
+local host = settings:get('discord.host') or 'localhost'
 local port = settings:get('discord.port') or 8080
 local timeout = 10
 
@@ -94,7 +95,7 @@ function discord.handle_response(response)
                 success = result
             }
             http.fetch({
-                url = 'localhost:'..tostring(port),
+                url = tostring(host)..':'..tostring(port),
                 timeout = timeout,
                 post_data = minetest.write_json(request)
             }, discord.handle_response)
@@ -111,7 +112,7 @@ function discord.send(message, id)
         data['context'] = id
     end
     http.fetch_async({
-        url = 'localhost:'..tostring(port),
+        url = tostring(host)..':'..tostring(port),
         timeout = timeout,
         post_data = minetest.write_json(data)
     })
@@ -136,7 +137,7 @@ minetest.register_globalstep(function(dtime)
         if timer > 0.9 then
             if not ongoing then
                 ongoing = http.fetch_async({
-                    url = 'localhost:'..tostring(port),
+                    url = tostring(host)..':'..tostring(port),
                     timeout = timeout,
                     post_data = minetest.write_json({
                         type = 'DISCORD-REQUEST-DATA'
@@ -148,7 +149,7 @@ minetest.register_globalstep(function(dtime)
                 if res.completed == true then
                     discord.handle_response(res)
                     ongoing = http.fetch_async({
-                        url = 'localhost:'..tostring(port),
+                        url = tostring(host)..':'..tostring(port),
                         timeout = timeout,
                         post_data = minetest.write_json({
                             type = 'DISCORD-REQUEST-DATA'
