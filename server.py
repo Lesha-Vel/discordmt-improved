@@ -59,6 +59,7 @@ channel_id = int(config['RELAY']['channel_id'])
 port = int(config['RELAY']['port'])
 token = config['BOT']['token']
 logins_allowed = config['RELAY'].getboolean('allow_logins')
+remote_allowed = config['RELAY'].getboolean('allow_remote')
 do_clean_invites = config['RELAY'].getboolean('clean_invites')
 do_use_nicknames = config['RELAY'].getboolean('use_nicknames')
 if config['RELAY'].getboolean('send_every_3s'):
@@ -247,6 +248,9 @@ app.on_startup.append(on_startup)
 if __name__ == '__main__':
     try:
         print('='*37+'\nStarting relay. Press Ctrl-C to exit.\n'+'='*37)
-        web.run_app(app, host='localhost', port=port)
+        if remote_allowed:
+            web.run_app(app, host='0.0.0.0', port=port)
+        else:
+            web.run_app(app, host='localhost', port=port)
     except KeyboardInterrupt:
         pass

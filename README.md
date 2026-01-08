@@ -26,6 +26,7 @@ Example `relay.conf`: *(The token shown below has been regenerated)*
 token = NjEwODk0MDU4ODY4NzAzMjMz.XVL5dA.8j8d2XN8_5UwRheG91P2XksYDoM
 command_prefix = !
 [RELAY]
+allow_remote = false
 port = 8080
 channel_id = 576585506658189332
 allow_logins = true
@@ -33,12 +34,13 @@ clean_invites = true
 use_nicknames = true
 ```
 
-4. Set `discord.port` in your `minetest.conf` to match the port you used in `relay.conf`, and grant the mod permission to use the HTTP API. You may also set `discord.text_color` to a hex color string if you'd like to color relayed messages from Discord.
+4. Set `discord.port` in your `minetest.conf` to match the port you used in `relay.conf`, and grant the mod permission to use the HTTP API. You may also set `discord.text_color` to a hex color string if you'd like to color relayed messages from Discord. Set `discord.host` if you want to use remote server.py
 
 Example `minetest.conf` excerpt:
 ```
 secure.enable_security = true
 secure.http_mods = discordmt
+discord.host = localhost
 discord.port = 8080
 discord.text_color = #a7a7a7
 ```
