@@ -8,7 +8,23 @@ local timeout = 10
 
 discord = {}
 
+-- Configuration
 discord.text_colorization = settings:get('discord.text_color') or '#ffffff'
+
+discord.send_server_startup = settings:get_bool('discord.send_server_startup', true)
+discord.send_server_shutdown = settings:get_bool('discord.send_server_shutdown', true)
+
+discord.include_server_status = settings:get_bool('discord.include_server_status', true)
+discord.include_server_status_on_shutdown = settings:get_bool('discord.include_server_status_on_shutdown', true)
+
+
+discord.startup_text = settings:get('discord.startup_text') or '*** Server started!'
+discord.shutdown_text = settings:get('discord.shutdown_text') or '*** Server shutting down...'
+
+discord.use_embeds_on_server_updates = settings:get_bool('discord.use_embeds_on_server_updates', true)
+
+discord.startup_color = settings:get('discord.startup_color') or '#5865f2'
+discord.shutdown_color = settings:get('discord.shutdown_color') or '#d9d9dc'
 
 discord.registered_on_messages = {}
 
@@ -104,7 +120,7 @@ function discord.handle_response(response)
     end
 end
 
-function discord.send(message, id)
+function discord.send(message, id, embed_color, embed_description)
     local content
     if escape_formatting then
         content = minetest.strip_colors(message):gsub("\\", "\\\\"):gsub("%*", "\\*"):gsub("_", "\\_"):gsub("^#", "\\#")
@@ -118,6 +134,8 @@ function discord.send(message, id)
     if id then
         data['context'] = id
     end
+    data['embed_color'] = embed_color
+    data['embed_description'] = embed_description
     http.fetch_async({
         url = tostring(host)..':'..tostring(port),
         timeout = timeout,
@@ -171,7 +189,15 @@ minetest.register_globalstep(function(dtime)
 end)
 
 minetest.register_on_shutdown(function()
-    discord.send('*** Server shutting down...')
+    if discord.send_server_shutdown then
+        if discord.use_embeds_on_server_updates then
+            discord.send(discord.shutdown_text, nil, discord.shutdown_color,
+                (discord.include_server_status_on_shutdown and minetest.get_server_status():gsub("^#", "\\#") or nil))
+        else
+            discord.send(discord.shutdown_text ..
+                (discord.include_server_status_on_shutdown and " - " .. minetest.get_server_status() or ""))
+        end
+    end
 end)
 
 if irc_enabled then
@@ -182,4 +208,13 @@ if irc_enabled then
     end
 end
 
-discord.send('*** Server started!')
+if discord.send_server_startup then
+    if discord.use_embeds_on_server_updates then
+        discord.send(discord.startup_text, nil, discord.startup_color,
+            (discord.include_server_status and minetest.get_server_status():gsub("^#", "\\#") or nil))
+        -- core.log('error', minetest.get_server_status())
+    else
+        discord.send(discord.startup_text ..
+            (discord.include_server_status and " - " .. minetest.get_server_status() or ""))
+    end
+end

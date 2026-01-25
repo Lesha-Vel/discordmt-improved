@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-import sys
+# import sys
 from aiohttp import web
-import aiohttp
+# import aiohttp
 import discord
+from discord.colour import Color
+from discord.embeds import Embed
 from discord.ext import commands
 import asyncio
-import collections
+# import collections
 import json
 import time
 import configparser
@@ -62,10 +64,10 @@ logins_allowed = config['RELAY'].getboolean('allow_logins')
 remote_allowed = config['RELAY'].getboolean('allow_remote')
 do_clean_invites = config['RELAY'].getboolean('clean_invites')
 do_use_nicknames = config['RELAY'].getboolean('use_nicknames')
-if config['RELAY'].getboolean('send_every_3s'):
-    incoming_msgs = collections.deque()
-else:
-    incoming_msgs = None
+# if config['RELAY'].getboolean('send_every_3s'):
+#     incoming_msgs = collections.deque()
+# else:
+#     incoming_msgs = None
 
 last_request = 0
 
@@ -89,17 +91,35 @@ async def handle(request):
             msg = translation_re.sub('', data['content'])
             msg = discord.utils.escape_mentions(msg)
             chunks = [msg[i:i+2000] for i in range(0, len(msg), 2000)]
-            if 'context' in data:
-                id = int(data['context'])
-                target_channel = bot.get_partial_messageable(id)
-                for chunk in chunks:
-                    await target_channel.send(chunk)
-            elif incoming_msgs is None:
-                for chunk in chunks:
-                    await channel.send(chunk)
+            if 'embed_color' in data:
+                if 'context' in data:
+                    id = int(data['context'])
+                    target_channel = bot.get_partial_messageable(id)
+                    for chunk in chunks:
+                        await target_channel.send(embed=Embed(title=chunk, color=Color.from_str(data['embed_color']), 
+                            description=(data['embed_description'] if data['embed_description'] else None)))
+                # elif incoming_msgs is None:
+                else:
+                    for chunk in chunks:
+                        await channel.send(embed=Embed(title=chunk, color=Color.from_str(data['embed_color']), 
+                            description=(data['embed_description'] if 'embed_description' in data else None)))
+                # else:
+                #     for chunk in chunks:
+                #         incoming_msgs.append({'msg': chunk, 'color': Color.from_str(data['embed_color']),
+                #             'description': (data['embed_description'] if data['embed_description'] else None)})
             else:
-                for chunk in chunks:
-                    incoming_msgs.append(chunk)
+                if 'context' in data:
+                    id = int(data['context'])
+                    target_channel = bot.get_partial_messageable(id)
+                    for chunk in chunks:
+                        await target_channel.send(chunk)
+                # elif incoming_msgs is None:
+                else:
+                    for chunk in chunks:
+                        await channel.send(chunk)
+                # else:
+                #     for chunk in chunks:
+                #         incoming_msgs.append({'msg': chunk})
 
             # discord.send should NOT block extensively on the Lua side
             return web.Response(text='Acknowledged')
@@ -216,30 +236,31 @@ async def status(ctx, *, args=None):
     command_queue.add(data)
 
 
-async def send_messages():
-    while True:
-        await asyncio.sleep(3)
-        if channel is None or not incoming_msgs:
-            continue
+# async def send_messages():
+#     while True:
+#         await asyncio.sleep(3)
+#         # if channel is None or not incoming_msgs:
+#         if channel is None:
+#             continue
 
-        to_send = []
-        msglen = 0
-        while incoming_msgs and msglen + len(incoming_msgs[0]) <= 2000:
-            msg = incoming_msgs.popleft()
-            to_send.append(msg)
-            msglen += len(msg) + 1
+#         to_send = []
+#         msglen = 0
+#         while incoming_msgs and msglen + len(incoming_msgs[0]['msg']) <= 2000:
+#             msg = incoming_msgs.popleft()
+#             to_send.append(msg['msg'])
+#             msglen += len(msg['msg']) + 1
 
-        try:
-            await asyncio.wait_for(channel.send('\n'.join(to_send)),
-                                   timeout=10)
-        except Exception:
-            traceback.print_exc()
+#         try:
+#             await asyncio.wait_for(channel.send('\n'.join(to_send)),
+#                                    timeout=10)
+#         except Exception:
+#             traceback.print_exc()
 
 
 async def on_startup(app):
     asyncio.create_task(bot.start(token))
-    if incoming_msgs is not None:
-        asyncio.create_task(send_messages())
+    # if incoming_msgs is not None:
+    #     asyncio.create_task(send_messages())
 
 
 app.on_startup.append(on_startup)

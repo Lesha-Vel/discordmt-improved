@@ -1,3 +1,12 @@
 discord.port (Port to run the relay on.) int 8080
 discord.text_color (Custom color for relayed messages.) string #ffffff
 discord.escape_formatting (escape special symbols like backslash, asterisk, hash, or underscore) bool false
+discord.send_server_startup (Send server startups) bool true
+discord.send_server_shutdown (Send server shutdowns) bool true
+discord.include_server_status (Include server status in startup notification) bool true
+discord.include_server_status_on_shutdown (Include server status on shutdown in startup notification) bool true
+discord.startup_text (Text of notification on server startup) string Server started
+discord.shutdown_text (Text of notification on server shut-down) string Server shut down
+discord.use_embeds_on_server_updates (Use Discord embeds for server status notifications) bool true
+discord.startup_color (Startup Discord embed color) string #5865f2
+discord.shutdown_color (Shut down Discord embed color) string
