@@ -1,3 +1,3 @@
-discord.port (Port to run the relay on.) int 8080
-discord.text_color (Custom color for relayed messages.) string #ffffff
-discord.escape_formatting (escape special symbols like backslash, asterisk, hash, or underscore) bool false
+discord_bridge.port (Port to run the relay on.) int 8080
+discord_bridge.text_color (Custom color for relayed messages.) string #ffffff
+discord_bridge.escape_formatting (escape special symbols like backslash, asterisk, hash, or underscore) bool false

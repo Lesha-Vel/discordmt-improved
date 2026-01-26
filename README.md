@@ -1,4 +1,4 @@
-## Luanti-Discord Relay `[discordmt]`
+## Luanti-Discord Relay `[discord_bridge]`
 
 A feature-filled Discord relay for Luanti, supporting:
 
@@ -10,7 +10,7 @@ A feature-filled Discord relay for Luanti, supporting:
 
 ## Great! How do I use it?
 
-Easy! `discordmt` works by running a Python program which converses with a serverside mod using HTTP requests.
+Easy! `discord_bridge` works by running a Python program which converses with a serverside mod using HTTP requests.
 
 Python 3.8+, `aiohttp` 3.7.4+ and `discord.py` 2.0.0+ are required.
 
@@ -39,7 +39,7 @@ use_nicknames = true
 Example `minetest.conf` excerpt:
 ```
 secure.enable_security = true
-secure.http_mods = discordmt
+secure.http_mods = discord_bridge
 discord.host = localhost
 discord.port = 8080
 discord.text_color = #a7a7a7

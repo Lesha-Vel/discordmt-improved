@@ -1,9 +1,9 @@
 local http = minetest.request_http_api()
 local settings = minetest.settings
 
-local host = settings:get('discord.host') or 'localhost'
-local port = settings:get('discord.port') or 8080
-local escape_formatting = settings:get_bool('discord.escape_formatting') or false
+local host = settings:get('discord_bridge.host') or 'localhost'
+local port = settings:get('discord_bridge.port') or 8080
+local escape_formatting = settings:get_bool('discord_bridge.escape_formatting') or false
 local timeout = 10
 
 discord = {}

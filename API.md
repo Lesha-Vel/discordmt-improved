@@ -1,6 +1,6 @@
 ## API
 
-`discordmt` offers a simple API which other mods can use to listen to and send messages with Discord.
+`discord_bridge` offers a simple API which other mods can use to listen to and send messages with Discord.
 
 It does not expose the command interface or logins to the API, and `discord.register_on_message` events will *not* recieve login information.
 
