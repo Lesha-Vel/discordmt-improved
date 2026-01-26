@@ -14,7 +14,7 @@ This function makes an HTTP request; therefore the sending of large volumes of d
 Adds a function to `discord.registered_on_messages`, which are called every time a message is received from the specified relay channel on Discord. `name` is by default the Discord username of the user who sent the message (excluding the discriminator) and `message` is the message content. This function should be called on startup.
 
 ### `discord.chat_send_all(message)`
-Sends a message to all ingame (Minetest) players. This function does **not** relay to Discord. It may, however, trigger other mods which have overridden `minetest.chat_send_all`, dependent only on the capricous nature of Minetest's mod loading.
+Sends a message to all ingame (Luanti) players. This function does **not** relay to Discord. It may, however, trigger other mods which have overridden `minetest.chat_send_all`, dependent only on the capricous nature of Luanti's mod loading.
 
 ### `discord.send_noirc(message)`
 Sends a message to Discord, but does **not** relay said message to IRC. This function is *only* available if the IRC mod is enabled.
