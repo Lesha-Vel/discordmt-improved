@@ -110,12 +110,20 @@ function discord.handle_response(response)
                 minetest.chat_send_player = function(name, message)
                     old_chat_send_player(name, message)
                     if name == v.name then
-                        discord.send(message, v.context or nil)
+                        if not escape_formatting then
+                            discord.send(message, v.context or nil)
+                        else
+                            discord.send(message:gsub("\\", "\\\\"):gsub("%*", "\\*"):gsub("_", "\\_"):gsub("^#", "\\#"), v.context or nil)
+                        end
                     end
                 end
                 local success, ret_val = commands[v.command].func(v.name, v.params or '')
                 if ret_val then
-                    discord.send(ret_val, v.context or nil)
+                    if not escape_formatting then
+                        discord.send(ret_val, v.context or nil)
+                    else
+                        discord.send(ret_val:gsub("\\", "\\\\"):gsub("%*", "\\*"):gsub("_", "\\_"):gsub("^#", "\\#"), v.context or nil)
+                    end
                 end
                 minetest.chat_send_player = old_chat_send_player
             else
@@ -152,11 +160,7 @@ function discord.send(message, id, embed_color, embed_description)
         type = 'DISCORD-RELAY-MESSAGE'
     }
     if message then
-        if escape_formatting then
-            content = minetest.strip_colors(message):gsub("\\", "\\\\"):gsub("%*", "\\*"):gsub("_", "\\_"):gsub("^#", "\\#")
-        else
-            content = minetest.strip_colors(message)
-        end
+        content = minetest.strip_colors(message)
         data['content'] = content
     else
         data['content'] = nil
@@ -183,7 +187,11 @@ end
 -- Register the chat message callback after other mods load so that anything
 -- that overrides chat will work correctly
 minetest.after(0, minetest.register_on_chat_message, function(name, message)
-    discord.send(replace(discord.name_wrapper, name) .. message)
+    if not escape_formatting then
+        discord.send(replace(discord.name_wrapper, name) .. message)
+    else
+        discord.send(replace(discord.name_wrapper, name) .. message:gsub("\\", "\\\\"):gsub("%*", "\\*"):gsub("_", "\\_"):gsub("^#", "\\#"))
+    end
 end)
 
 
@@ -289,7 +297,11 @@ if irc_enabled then
     discord.old_irc_sendLocal = irc.sendLocal
     function irc.sendLocal(msg)
         discord.old_irc_sendLocal(msg)
-        discord.send(msg)
+        if not escape_formatting then
+            discord.send(msg)
+        else
+            discord.send(msg:gsub("\\", "\\\\"):gsub("%*", "\\*"):gsub("_", "\\_"):gsub("^#", "\\#"))
+        end
     end
 end
 
