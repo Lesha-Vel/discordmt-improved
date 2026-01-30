@@ -13,6 +13,7 @@ discord.send_deaths (Notification on player death) bool true
 discord.send_server_startup (Send server startups) bool true
 discord.send_server_shutdown (Send server shutdowns) bool true
 
+discord.name_wrapper (Name wrapper, 2 spaces at the end are important) string <**@1**>  
 discord.include_server_status (Include server status in startup notification) bool true
 discord.include_server_status_on_shutdown (Include server status on shutdown in startup notification) bool true
 

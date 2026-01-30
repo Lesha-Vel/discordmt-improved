@@ -22,6 +22,7 @@ discord.send_deaths = settings:get_bool('discord.send_deaths', true)
 discord.send_server_startup = settings:get_bool('discord.send_server_startup', true)
 discord.send_server_shutdown = settings:get_bool('discord.send_server_shutdown', true)
 
+discord.name_wrapper = settings:get('discord.name_wrapper') or '<**@1**>  '
 discord.include_server_status = settings:get_bool('discord.include_server_status', true)
 discord.include_server_status_on_shutdown = settings:get_bool('discord.include_server_status_on_shutdown', true)
 
@@ -181,7 +182,7 @@ end
 -- Register the chat message callback after other mods load so that anything
 -- that overrides chat will work correctly
 minetest.after(0, minetest.register_on_chat_message, function(name, message)
-    discord.send(minetest.format_chat_message(name, message))
+    discord.send(replace(discord.name_wrapper, name) .. message)
 end)
 
 
