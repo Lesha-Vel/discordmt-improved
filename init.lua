@@ -11,6 +11,8 @@ discord = {}
 -- Configuration
 discord.text_colorization = settings:get('discord.text_color') or '#ffffff'
 
+discord.date = settings:get('discord.date') or '%d.%m.%Y %H:%M'
+
 discord.send_joins = settings:get_bool('discord.send_joins', true)
 discord.send_last_login = settings:get_bool('discord.send_last_login', false)
 discord.send_leaves = settings:get_bool('discord.send_leaves', true)

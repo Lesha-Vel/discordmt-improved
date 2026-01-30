@@ -2,6 +2,8 @@ discord.port (Port to run the relay on.) int 8080
 discord.text_color (Custom color for relayed messages.) string #ffffff
 discord.escape_formatting (escape special symbols like backslash, asterisk, hash, or underscore) bool false
 
+discord.date (Date format string) string %d.%m.%Y %H:%M
+
 discord.send_joins (Notification on player join) bool true
 discord.send_last_login (Include last login in notification on player join) bool false
 discord.send_leaves (Notification on player leave) bool true
