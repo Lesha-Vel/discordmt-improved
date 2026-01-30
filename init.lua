@@ -23,7 +23,7 @@ discord.send_server_startup = settings:get_bool('discord.send_server_startup', t
 discord.send_server_shutdown = settings:get_bool('discord.send_server_shutdown', true)
 
 discord.name_wrapper = settings:get('discord.name_wrapper') or '<**@1**>  '
-discord.include_server_status = settings:get_bool('discord.include_server_status', true)
+discord.include_server_status_on_startup = settings:get_bool('discord.include_server_status_on_startup', true)
 discord.include_server_status_on_shutdown = settings:get_bool('discord.include_server_status_on_shutdown', true)
 
 discord.startup_text = settings:get('discord.startup_text') or '*** Server started!'
@@ -295,10 +295,10 @@ end
 if discord.send_server_startup then
     if discord.use_embeds_on_server_updates then
         discord.send(discord.startup_text, nil, discord.startup_color,
-            (discord.include_server_status and minetest.get_server_status():gsub("^#", "\\#") or nil))
+            (discord.include_server_status_on_startup and minetest.get_server_status():gsub("^#", "\\#") or nil))
         -- core.log('error', minetest.get_server_status())
     else
         discord.send(discord.startup_text ..
-            (discord.include_server_status and " - " .. minetest.get_server_status() or ""))
+            (discord.include_server_status_on_startup and " - " .. minetest.get_server_status() or ""))
     end
 end

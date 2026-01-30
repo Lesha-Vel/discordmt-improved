@@ -14,8 +14,8 @@ discord.send_server_startup (Send server startups) bool true
 discord.send_server_shutdown (Send server shutdowns) bool true
 
 discord.name_wrapper (Name wrapper, 2 spaces at the end are important) string <**@1**>  
-discord.include_server_status (Include server status in startup notification) bool true
-discord.include_server_status_on_shutdown (Include server status on shutdown in startup notification) bool true
+discord.include_server_status_on_startup (Include server status in startup notification) bool true
+discord.include_server_status_on_shutdown (Include server status in shutdown notification) bool true
 
 discord.startup_text (Text of notification on server startup) string Server started
 discord.shutdown_text (Text of notification on server shut-down) string Server shut down
