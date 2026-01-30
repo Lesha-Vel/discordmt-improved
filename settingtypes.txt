@@ -30,8 +30,8 @@ discord.use_embeds_on_deaths (Use Discord embeds for notifications on player dea
 discord.use_embeds_on_server_updates (Use Discord embeds for server status notifications) bool true
 
 discord.startup_color (Startup Discord embed color) string #5865f2
-discord.shutdown_color (Shut down Discord embed color) string
+discord.shutdown_color (Shut down Discord embed color) string NOT_SET
 discord.join_color (Join Discord embed color) string #57f287
 discord.leave_color (Leave Discord embed color) string #ed4245
 discord.welcome_color (Welcome Discord embed color) string #57f287
-discord.death_color (Death Discord embed color) string
+discord.death_color (Death Discord embed color) string NOT_SET

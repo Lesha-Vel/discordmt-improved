@@ -39,11 +39,11 @@ discord.use_embeds_on_deaths = settings:get_bool('discord.use_embeds_on_deaths',
 discord.use_embeds_on_server_updates = settings:get_bool('discord.use_embeds_on_server_updates', true)
 
 discord.startup_color = settings:get('discord.startup_color') or '#5865f2'
-discord.shutdown_color = settings:get('discord.shutdown_color') or '#d9d9dc'
+discord.shutdown_color = settings:get('discord.shutdown_color') or 'NOT_SET'
 discord.join_color = settings:get('discord.join_color') or '#57f287'
 discord.leave_color = settings:get('discord.leave_color') or '#ed4245'
 discord.welcome_color = settings:get('discord.welcome_color') or '#57f287'
-discord.death_color = settings:get('discord.death_color') or '#d9d9dc'
+discord.death_color = settings:get('discord.death_color') or 'NOT_SET'
 
 discord.registered_on_messages = {}
 
@@ -165,7 +165,9 @@ function discord.send(message, id, embed_color, embed_description)
         data['context'] = id
     end
     data['embed_color'] = embed_color
-    data['embed_description'] = embed_description
+    if embed_description then
+        data['embed_description'] = embed_description
+    end
     http.fetch_async({
         url = tostring(host)..':'..tostring(port),
         timeout = timeout,
