@@ -39,6 +39,7 @@ discord.use_embeds_on_deaths = settings:get_bool('discord.use_embeds_on_deaths',
 discord.use_embeds_on_server_updates = settings:get_bool('discord.use_embeds_on_server_updates', true)
 discord.use_embeds_on_cmd_chat_send_player = settings:get_bool('discord.use_embeds_on_cmd_chat_send_player', false)
 discord.use_embeds_on_cmd_ret_value = settings:get_bool('discord.use_embeds_on_cmd_ret_value', false)
+discord.use_embeds_on_svc_dms = settings:get_bool('discord.use_embeds_on_svc_dms', false)
 
 discord.startup_color = settings:get('discord.startup_color') or '#5865f2'
 discord.shutdown_color = settings:get('discord.shutdown_color') or 'NOT_SET'
@@ -48,6 +49,9 @@ discord.welcome_color = settings:get('discord.welcome_color') or '#57f287'
 discord.death_color = settings:get('discord.death_color') or 'NOT_SET'
 discord.cmd_chat_send_player_color = settings:get('discord.cmd_chat_send_player_color') or 'NOT_SET'
 discord.cmd_ret_value_color = settings:get('discord.cmd_ret_value_color') or 'NOT_SET'
+discord.svc_dms_banned_color = settings:get('discord.svc_dms_banned_color') or '#ed4245'
+discord.svc_dms_privs_color = settings:get('discord.svc_dms_privs_color') or '#ede442'
+discord.svc_dms_cnf_color = settings:get('discord.svc_dms_cnf_color') or '#ed9d42'
 
 discord.registered_on_messages = {}
 
@@ -96,17 +100,25 @@ function discord.handle_response(response)
     if data.commands then
         local commands = minetest.registered_chatcommands
         for _, v in pairs(data.commands) do
-            if commands[v.command] then
-                if minetest.get_ban_description(v.name) ~= '' then
+            if minetest.get_ban_description(v.name) ~= '' then
+                if not discord.use_embeds_on_svc_dms then
                     discord.send('You cannot run commands because you are banned.', v.context or nil)
-                    return
+                else
+                    discord.send('You cannot run commands because you are banned.', v.context or nil, discord.svc_dms_banned_color)
                 end
+                return
+            end
+            if commands[v.command] then
                 -- Check player privileges
                 local required_privs = commands[v.command].privs or {}
                 local player_privs = minetest.get_player_privs(v.name)
                 for priv, value in pairs(required_privs) do
                     if player_privs[priv] ~= value then
-                        discord.send('Insufficient privileges.', v.context or nil)
+                        if not discord.use_embeds_on_svc_dms then
+                            discord.send('Insufficient privileges.', v.context or nil)
+                        else
+                            discord.send('Insufficient privileges.', v.context or nil, discord.svc_dms_privs_color)
+                        end
                         return
                     end
                 end
@@ -137,7 +149,11 @@ function discord.handle_response(response)
                 end
                 minetest.chat_send_player = old_chat_send_player
             else
-                discord.send(('Command not found: `%s`'):format(v.command), v.context or nil)
+                if not discord.use_embeds_on_svc_dms then
+                    discord.send(('Command not found: `%s`'):format(v.command), v.context or nil)
+                else
+                    discord.send(('Command not found: `%s`'):format(v.command), v.context or nil, discord.svc_dms_cnf_color)
+                end
             end
         end
     end

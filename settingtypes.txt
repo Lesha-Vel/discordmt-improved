@@ -30,6 +30,7 @@ discord.use_embeds_on_deaths (Use Discord embeds for notifications on player dea
 discord.use_embeds_on_server_updates (Use Discord embeds for server status notifications) bool true
 discord.use_embeds_on_cmd_chat_send_player (Use Discord embeds for DM command chat_send_player) bool false
 discord.use_embeds_on_cmd_ret_value (Use Discord embeds for DM command return value) bool false
+discord.use_embeds_on_svc_dms (Use Discord embeds for service DMS) bool false
 
 discord.startup_color (Startup Discord embed color) string #5865f2
 discord.shutdown_color (Shut down Discord embed color) string NOT_SET
@@ -39,3 +40,6 @@ discord.welcome_color (Welcome Discord embed color) string #57f287
 discord.death_color (Death Discord embed color) string NOT_SET
 discord.cmd_chat_send_player_color (Discord DM command chat_send_player color) string NOT_SET
 discord.cmd_ret_value_color (Discord DM command return value color) string NOT_SET
+discord.svc_dms_banned_color (You cannot run commands because you are banned color) string #ed4245
+discord.svc_dms_privs_color (Insufficient privileges color) string #ede442
+discord.svc_dms_cnf_color (Command not found color) string #ed9d42
